@@ -11,7 +11,8 @@
         <setting name="defaultExecutorType" value="REUSE"/>
     </settings>
 
-<!--    <typeAliases>-->
-<!--    </typeAliases>-->
+    <typeAliases>
+        <package name="com.xxddongxx.calendar.model"/>
+    </typeAliases>
 
 </configuration>

@@ -15,6 +15,5 @@ server:
 # mybatis setting
 mybatis:
     check-config-location: true
-    type-aliases-package: com.xxddongxx.*.*.model
     config-location: classpath:mybatis-config.xml
     mapper-locations: classpath:mapper/*/*.xml

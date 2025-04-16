@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapepr 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.xxddongxx.calendar.mapper.CalendarMapper">
+    <insert id="insertCalendar" parameterType="Calendar">
+        /* insertCalendar */
+        INSERT INTO calendar (
+            title
+            , is_important
+            , location
+            , is_lunar
+            , start_at
+            , end_at
+            , is_all_day
+            , is_repeat
+            , repeat_type
+            , is_private
+            , color
+            , description
+            , user_id
+            , created_at
+        )
+        VALUES (
+            #{title}
+            , #{isImportant}
+            , #{location}
+            , #{isLunar}
+            , #{startAt}
+            , #{endAt}
+            , #{isAllDay}
+            , #{isRepeat}
+            , #{repeatType}
+            , #{isPrivate}
+            , #{color}
+            , #{description}
+            , #{userId}
+            , NOW()
+        )
+    </insert>
+</mapper>

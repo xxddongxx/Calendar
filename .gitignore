@@ -168,3 +168,4 @@ gradle-app.setting
 *.hprof
 
 .DS_store
+.idea
