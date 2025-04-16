@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Schema(description = "일정 등록 요청 DTO")
 public class CalendarCreateDto {
 
-    @NotBlank
+    @NotBlank(message = "제목은 필수입니다.")
     @Schema(description = "일정 제목", example = "저녁 약속")
     private String title;
 
@@ -29,11 +29,11 @@ public class CalendarCreateDto {
     @Schema(description = "양력 여부(양력: true, 음력: false)", example = "true")
     private boolean isLunar;
 
-    @NotNull
+    @NotNull(message = "시작 시간은 필수입니다.")
     @Schema(description = "시작 시간", example = "2025-04-15T18:00:00")
     private LocalDateTime startAt;
 
-    @NotNull
+    @NotNull(message = "종료 시간은 필수입니다.")
     @Schema(description = "종료 시간", example = "2025-04-15T20:00:00")
     private LocalDateTime endAt;
 
@@ -55,7 +55,7 @@ public class CalendarCreateDto {
     @Schema(description = "일정 설명", example = "맛있는 저녁!!")
     private String description;
 
-    @NotNull
+    @NotNull(message = "사용자 아이디는 필수입니다.")
     @Schema(description = "사용자 ID", example = "1")
     private Long userId;
 

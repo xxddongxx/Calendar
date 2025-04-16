@@ -2,11 +2,13 @@ package com.xxddongxx.calendar.controller;
 
 import com.xxddongxx.calendar.dto.CalendarCreateDto;
 import com.xxddongxx.calendar.service.CalendarService;
+import com.xxddongxx.calendar.util.ResponseMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,9 +22,10 @@ public class CalendarController {
 
     @PostMapping
     @Operation(summary = "일정 등록", description = "새로운 일정을 등록합니다.")
-    public ResponseEntity<Void> createCalendar(@RequestBody @Valid CalendarCreateDto calendarCreateDto){
+    public ResponseEntity<ResponseMessage<Void>> createCalendar(@RequestBody @Valid CalendarCreateDto calendarCreateDto){
         logger.info("create calendar!");
         calendarService.createCalendar(calendarCreateDto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ResponseMessage.success());
     }
 }
