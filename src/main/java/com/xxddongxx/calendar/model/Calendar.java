@@ -24,4 +24,6 @@ public class Calendar {
     private String color;
     private String description;
     private Long userId;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

@@ -59,7 +59,7 @@ public class CalendarCreateDto {
     @Schema(description = "사용자 ID", example = "1")
     private Long userId;
 
-    public Calendar toEntity() {
+    public Calendar toModel() {
         return Calendar.builder()
                 .title(title)
                 .isImportant(isImportant)

@@ -37,4 +37,12 @@
             , NOW()
         )
     </insert>
+    <select id="findCalendarOne" parameterType="java.lang.Long" resultType="Calendar">
+        /* findCalendarOne */
+        SELECT
+            *
+        FROM calendar
+        WHERE
+            id = #{value}
+    </select>
 </mapper>

@@ -1,6 +1,7 @@
 package com.xxddongxx.calendar.controller;
 
 import com.xxddongxx.calendar.dto.CalendarCreateDto;
+import com.xxddongxx.calendar.dto.CalendarDto;
 import com.xxddongxx.calendar.service.CalendarService;
 import com.xxddongxx.calendar.util.ResponseMessage;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,5 +28,15 @@ public class CalendarController {
         calendarService.createCalendar(calendarCreateDto);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ResponseMessage.success());
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "일정 상세 조회", description = "등록된 일정을 상세조회합니다.")
+    public ResponseEntity<ResponseMessage<CalendarDto>> findCalendarOne(@PathVariable("id") Long id){
+        logger.info("find Calendar One");
+        CalendarDto calendarDto = calendarService.findCalendarOne(id);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ResponseMessage.success(calendarDto));
     }
 }

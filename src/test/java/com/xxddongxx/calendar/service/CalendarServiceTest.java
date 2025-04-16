@@ -1,7 +1,10 @@
 package com.xxddongxx.calendar.service;
 
+import com.xxddongxx.calendar.config.exception.CustomException;
 import com.xxddongxx.calendar.dto.CalendarCreateDto;
+import com.xxddongxx.calendar.dto.CalendarDto;
 import com.xxddongxx.calendar.mapper.CalendarMapper;
+import com.xxddongxx.calendar.model.Calendar;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,11 +13,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CalendarServiceTest {
@@ -25,6 +29,7 @@ class CalendarServiceTest {
     @Mock
     private CalendarMapper calendarMapper;
 
+    @DisplayName("성공 - 일정 등록")
     @Test
     void createCalendarSuccess() {
         // given
@@ -132,5 +137,46 @@ class CalendarServiceTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("사용자 정보가 필요합니다.");
 
+    }
+
+    @DisplayName("성공 - 일정 상세 조회")
+    @Test
+    void findCalendarOneSuccess() {
+        // given
+        Long calendarId = 1L;
+        Calendar calendar = Calendar.builder()
+                .id(calendarId)
+                .title("회의")
+                .startAt(LocalDateTime.of(2025, 4, 15, 18, 30))
+                .endAt(LocalDateTime.of(2025, 4, 15, 20, 0))
+                .location("강남")
+                .userId(1L)
+                .build();
+
+        when(calendarMapper.findById(calendarId)).thenReturn(Optional.of(calendar));
+
+        // when
+        CalendarDto result = calendarService.findCalendarOne(calendarId);
+
+        // then
+        assertThat(result.getTitle()).isEqualTo("회의");
+        assertThat(result.getLocation()).isEqualTo("강남");
+    }
+
+    @DisplayName("실패 - 일정 상세 조회(존재하지 않는 ID)")
+    @Test
+    void findCalendarOneWithoutId(){
+        // given
+        Long calendarId = 999L;
+
+        // when
+        when(calendarMapper.findById(calendarId)).thenReturn(Optional.empty());
+
+        // then
+        assertThatThrownBy(() -> calendarService.findCalendarOne(calendarId))
+                .isInstanceOf(CustomException.class)
+                .hasMessage("등록된 일정이 없습니다.");
+
+        verify(calendarMapper).findById(calendarId);
     }
 }
