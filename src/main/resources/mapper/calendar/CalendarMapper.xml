@@ -86,4 +86,13 @@
         /* deleteCalendar */
         DELETE FROM calendar WHERE id = #{value};
     </delete>
+    <select id="findCalendarByDay" parameterType="Map" resultType="Calendar">
+        /* findCalendarByDay */
+        SELECT
+            *
+        FROM calendar
+        WHERE
+            user_id = #{userId}
+            AND DATE_FORMAT(start_at, '%Y-%m-%d') = #{date}
+    </select>
 </mapper>

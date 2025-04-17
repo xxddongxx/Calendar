@@ -13,12 +13,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class CalendarService {
 
     private static final Logger logger = LoggerFactory.getLogger(CalendarService.class);
     private final CalendarMapper calendarMapper;
+    private final Long USER_ID = 1L;
 
     @Transactional
     public void createCalendar(CalendarCreateDto calendarCreateDto){
@@ -48,6 +55,17 @@ public class CalendarService {
         Calendar calendar = this.findById(id);
 
         return new CalendarDto().toDto(calendar);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CalendarDto> findCalendarByDay(LocalDate date){
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("userId", USER_ID);
+        paramMap.put("date", date);
+
+        List<Calendar> calendarList = calendarMapper.findCalendarByDay(paramMap);
+
+        return calendarList.stream().map( calendar -> new CalendarDto().toDto(calendar)).collect(Collectors.toList());
     }
 
     @Transactional

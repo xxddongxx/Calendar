@@ -13,8 +13,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -317,5 +318,71 @@ class CalendarServiceTest {
         );
 
         verify(calendarMapper, never()).deleteCalendar(calendarId);
+    }
+
+    @DisplayName("성공 - 일별 일정 조회")
+    @Test
+    void findCalendarByDaySuccess(){
+        // given
+        Long userId = 1L;
+        LocalDate localDate = LocalDate.of(2025, 4,17);
+        Calendar calendar = Calendar.builder()
+                .id(1L)
+                .title("저녁 약속")
+                .location("여의도")
+                .isImportant(true)
+                .isLunar(true)
+                .startAt(LocalDateTime.of(2025, 4, 17, 18, 0))
+                .endAt(LocalDateTime.of(2025, 4, 17, 20, 0))
+                .isAllDay(false)
+                .isRepeat(true)
+                .repeatType("DAILY")
+                .isPrivate(true)
+                .color("#FF00AA")
+                .description("맛있는 저녁!!")
+                .userId(userId)
+                .build();
+
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("userId", userId);
+        paramMap.put("date", localDate);
+
+        List<Calendar> calendarList = List.of(calendar);
+
+        // Mocking
+        given(calendarMapper.findCalendarByDay(paramMap)).willReturn(calendarList);
+
+        // when
+        List<CalendarDto> result = calendarService.findCalendarByDay(localDate);
+
+        // then
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).getTitle()).isEqualTo("저녁 약속");
+        assertThat(result.get(0).getLocation()).isEqualTo("여의도");
+
+        verify(calendarMapper).findCalendarByDay(paramMap);
+    }
+
+    @DisplayName("성공 - 일별 일정 조회(조회 결과가 없을 때)")
+    @Test
+    void findCalendarByDayWithoutSuccess(){
+        // given
+        Long userId = 1L;
+        LocalDate localDate = LocalDate.of(2025, 4,18);
+
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("userId", userId);
+        paramMap.put("date", localDate);
+
+        // Mocking
+        given(calendarMapper.findCalendarByDay(paramMap)).willReturn(new ArrayList<>());
+
+        // when
+        List<CalendarDto> result = calendarService.findCalendarByDay(localDate);
+
+        // then
+        assertThat(result).hasSize(0);
+
+        verify(calendarMapper).findCalendarByDay(paramMap);
     }
 }
