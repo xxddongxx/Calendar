@@ -3,6 +3,7 @@ package com.xxddongxx.calendar.service;
 import com.xxddongxx.calendar.config.exception.CustomException;
 import com.xxddongxx.calendar.dto.CalendarCreateDto;
 import com.xxddongxx.calendar.dto.CalendarDto;
+import com.xxddongxx.calendar.dto.CalendarUpdateDto;
 import com.xxddongxx.calendar.mapper.CalendarMapper;
 import com.xxddongxx.calendar.model.Calendar;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +48,39 @@ public class CalendarService {
         Calendar calendar = this.findById(id);
 
         return new CalendarDto().toDto(calendar);
+    }
+
+    @Transactional
+    public CalendarDto updateCalendar(Long id, CalendarUpdateDto calendarUpdateDto){
+        Calendar calendar = this.findById(id);
+
+        if(!calendarUpdateDto.getId().equals(calendar.getId())){
+            throw new CustomException(HttpStatus.BAD_REQUEST, "잘못된 요청입니다.");
+        }
+
+        if(!calendar.getUserId().equals(calendarUpdateDto.getUserId())){
+            throw new IllegalArgumentException("작성자가 아니므로 수정이 불가능합니다.");
+        }
+
+        if(calendarUpdateDto.getTitle().isEmpty() || calendarUpdateDto.getTitle() == null){
+            throw new IllegalArgumentException("제목은 필수입니다.");
+        }
+
+        if(calendarUpdateDto.getStartAt().isAfter(calendarUpdateDto.getEndAt())){
+            throw new IllegalArgumentException("시작 시간은 종료 시간보다 이전이어야 합니다.");
+        }
+
+        if(calendarUpdateDto.getUserId() == null){
+            throw new IllegalArgumentException("사용자 정보가 필요합니다.");
+        }
+
+        int result = calendarMapper.updateCalendar(calendarUpdateDto.toModel());
+
+        if(result == 0){
+            throw new CustomException(HttpStatus.BAD_REQUEST, "일정 수정에 실패했습니다.");
+        }
+
+        return new CalendarDto().toDto(this.findById(id));
     }
 
 }

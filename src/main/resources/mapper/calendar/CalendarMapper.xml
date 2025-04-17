@@ -37,7 +37,7 @@
             , NOW()
         )
     </insert>
-    <select id="findCalendarOne" parameterType="java.lang.Long" resultType="Calendar">
+    <select id="findById" parameterType="java.lang.Long" resultType="Calendar">
         /* findCalendarOne */
         SELECT
             *
@@ -45,4 +45,41 @@
         WHERE
             id = #{value}
     </select>
+    <update id="updateCalendar" parameterType="Calendar">
+        /* updateCalendar */
+        UPDATE calendar SET
+            title = #{title}
+            , start_at = #{startAt}
+            , end_at = #{endAt}
+            , updated_at = NOW()
+            <if test="isImportant != null">
+                , is_important = #{isImportant}
+            </if>
+            <if test="location != null">
+                , location = #{location}
+            </if>
+            <if test="isLunar">
+                , is_lunar = #{isLunar}
+            </if>
+            <if test="isAllDay">
+                , is_all_day = #{isAllDay}
+            </if>
+            <if test="isRepeat">
+                , is_repeat = #{isRepeat}
+            </if>
+            <if test="repeatType">
+                , repeat_type = #{repeatType}
+            </if>
+            <if test="isPrivate">
+                , is_private = #{isPrivate}
+            </if>
+            <if test="color">
+                , color = #{color}
+            </if>
+            <if test="description">
+                , description = #{description}
+            </if>
+        WHERE
+            id = #{id}
+    </update>
 </mapper>

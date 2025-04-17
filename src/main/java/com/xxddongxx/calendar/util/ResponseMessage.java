@@ -2,7 +2,6 @@ package com.xxddongxx.calendar.util;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.apache.logging.log4j.message.Message;
 import org.springframework.http.HttpStatus;
 
 @Getter

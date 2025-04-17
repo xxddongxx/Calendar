@@ -14,8 +14,11 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "일정 등록 요청 DTO")
-public class CalendarCreateDto {
+@Schema(description = "일정 수정 요청 DTO")
+public class CalendarUpdateDto {
+    @NotNull
+    @Schema(description = "일정 ID", example = "1")
+    private Long id;
 
     @NotBlank(message = "제목은 필수입니다.")
     @Schema(description = "일정 제목", example = "저녁 약속")
@@ -32,7 +35,7 @@ public class CalendarCreateDto {
 
     @NotNull(message = "시작 시간은 필수입니다.")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    @Schema(description = "시작 시간", example = "2025-04-16T11:00:00", type = "string", format = "date-time")
+    @Schema(description = "시작 시간", example = "2025-04-16T13:00:00", type = "string", format = "date-time")
     private LocalDateTime startAt;
 
     @NotNull(message = "종료 시간은 필수입니다.")
@@ -64,6 +67,7 @@ public class CalendarCreateDto {
 
     public Calendar toModel() {
         return Calendar.builder()
+                .id(id)
                 .title(title)
                 .isImportant(isImportant)
                 .location(location)

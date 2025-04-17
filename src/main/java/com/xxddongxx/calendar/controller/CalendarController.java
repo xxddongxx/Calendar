@@ -2,6 +2,7 @@ package com.xxddongxx.calendar.controller;
 
 import com.xxddongxx.calendar.dto.CalendarCreateDto;
 import com.xxddongxx.calendar.dto.CalendarDto;
+import com.xxddongxx.calendar.dto.CalendarUpdateDto;
 import com.xxddongxx.calendar.service.CalendarService;
 import com.xxddongxx.calendar.util.ResponseMessage;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,6 +36,20 @@ public class CalendarController {
     public ResponseEntity<ResponseMessage<CalendarDto>> findCalendarOne(@PathVariable("id") Long id){
         logger.info("find Calendar One");
         CalendarDto calendarDto = calendarService.findCalendarOne(id);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ResponseMessage.success(calendarDto));
+    }
+
+    @PutMapping("/{id}")
+    @Operation(summary = "일정 수정", description = "등록된 일정을 수정합니다.")
+    public ResponseEntity<ResponseMessage<CalendarDto>> updateCalendar(
+            @PathVariable("id") Long id,
+            @RequestBody @Valid CalendarUpdateDto calendarUpdateDto
+    ) {
+        logger.info("update Calendar");
+
+        CalendarDto calendarDto = calendarService.updateCalendar(id, calendarUpdateDto);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ResponseMessage.success(calendarDto));

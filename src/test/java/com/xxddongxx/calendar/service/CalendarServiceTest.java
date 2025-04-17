@@ -3,6 +3,7 @@ package com.xxddongxx.calendar.service;
 import com.xxddongxx.calendar.config.exception.CustomException;
 import com.xxddongxx.calendar.dto.CalendarCreateDto;
 import com.xxddongxx.calendar.dto.CalendarDto;
+import com.xxddongxx.calendar.dto.CalendarUpdateDto;
 import com.xxddongxx.calendar.mapper.CalendarMapper;
 import com.xxddongxx.calendar.model.Calendar;
 import org.junit.jupiter.api.DisplayName;
@@ -17,7 +18,9 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -178,5 +181,92 @@ class CalendarServiceTest {
                 .hasMessage("등록된 일정이 없습니다.");
 
         verify(calendarMapper).findById(calendarId);
+    }
+
+    @DisplayName("성공 - 일정 수정")
+    @Test
+    void updateCalendarSuccess(){
+        // given
+        Long calendarId = 1L;
+        Calendar calendar = Calendar.builder()
+                .id(calendarId)
+                .title("저녁 약속")
+                .location("여의도")
+                .isImportant(true)
+                .isLunar(true)
+                .startAt(LocalDateTime.of(2025, 4, 15, 18, 30))
+                .endAt(LocalDateTime.of(2025, 4, 15, 20, 0))
+                .isAllDay(false)
+                .isRepeat(true)
+                .repeatType("DAILY")
+                .isPrivate(true)
+                .color("#FF00AA")
+                .description("맛있는 저녁!!")
+                .userId(1L)
+                .build();
+
+        CalendarUpdateDto calendarUpdateDto = CalendarUpdateDto.builder()
+                .id(1L)
+                .title("저녁 약속!")
+                .location("여의도!")
+                .isImportant(false)
+                .isLunar(false)
+                .startAt(LocalDateTime.of(2025, 4, 15, 10, 30))
+                .endAt(LocalDateTime.of(2025, 4, 15, 15, 0))
+                .isAllDay(false)
+                .isRepeat(false)
+                .repeatType("WEEKLY")
+                .isPrivate(false)
+                .color("#FF00AB")
+                .description("맛있는 저녁!?")
+                .userId(1L)
+                .build();
+
+        // mocking
+        given(calendarMapper.findById(calendarId)).willReturn(Optional.of(calendar));
+        given(calendarMapper.updateCalendar(any(Calendar.class))).willReturn(1);
+
+        // when
+        calendarService.updateCalendar(calendarId, calendarUpdateDto);
+
+        // then
+        verify(calendarMapper, times(2)).findById(calendarId);
+        verify(calendarMapper).updateCalendar(any(Calendar.class));
+    }
+
+    @DisplayName("실패 - 일정 수정(없는 ID)")
+    @Test
+    void updateCalendarFail(){
+        // given
+        Long calendarId = 999L;
+
+        CalendarUpdateDto calendarUpdateDto = CalendarUpdateDto.builder()
+                .id(1L)
+                .title("저녁 약속!")
+                .location("여의도!")
+                .isImportant(false)
+                .isLunar(false)
+                .startAt(LocalDateTime.of(2025, 4, 15, 10, 30))
+                .endAt(LocalDateTime.of(2025, 4, 15, 15, 0))
+                .isAllDay(false)
+                .isRepeat(false)
+                .repeatType("WEEKLY")
+                .isPrivate(false)
+                .color("#FF00AB")
+                .description("맛있는 저녁!?")
+                .userId(1L)
+                .build();
+
+        // mocking
+        given(calendarMapper.findById(calendarId)).willReturn(Optional.empty());
+
+        // when & then
+        assertThrows(CustomException.class, () ->
+                calendarService.updateCalendar(calendarId, calendarUpdateDto)
+        );
+
+        // then
+        verify(calendarMapper).findById(calendarId);
+        verify(calendarMapper, never()).updateCalendar(any(Calendar.class));
     }
 }
