@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -265,8 +266,56 @@ class CalendarServiceTest {
                 calendarService.updateCalendar(calendarId, calendarUpdateDto)
         );
 
-        // then
         verify(calendarMapper).findById(calendarId);
         verify(calendarMapper, never()).updateCalendar(any(Calendar.class));
+    }
+
+    @DisplayName("성공 - 일정 삭제")
+    @Test
+    void deleteCalendarSuccess(){
+        // given
+        Long calendarId = 1L;
+        Calendar calendar = Calendar.builder()
+                .id(1L)
+                .title("저녁 약속")
+                .location("여의도")
+                .isImportant(true)
+                .isLunar(true)
+                .startAt(LocalDateTime.of(2025, 4, 15, 18, 30))
+                .endAt(LocalDateTime.of(2025, 4, 15, 20, 0))
+                .isAllDay(false)
+                .isRepeat(true)
+                .repeatType("DAILY")
+                .isPrivate(true)
+                .color("#FF00AA")
+                .description("맛있는 저녁!!")
+                .userId(1L)
+                .build();
+
+        // mocking
+        given(calendarMapper.findById(calendarId)).willReturn(Optional.of(calendar));
+        willDoNothing().given(calendarMapper).deleteCalendar(calendarId);
+
+        // when
+        calendarService.deleteCalendar(calendarId);
+
+        // then
+        verify(calendarMapper, times(1)).findById(calendarId);
+        verify(calendarMapper, times(1)).deleteCalendar(calendarId);
+    }
+
+    @DisplayName("실패 - 일정 삭제(해당 아이디의 일정이 없음)")
+    @Test
+    void deleteCalendarFail(){
+        // given
+        Long calendarId = 999L;
+        given(calendarMapper.findById(calendarId)).willReturn(Optional.empty());
+
+        // when & then
+        assertThrows(CustomException.class, () ->
+                calendarService.deleteCalendar(calendarId)
+        );
+
+        verify(calendarMapper, never()).deleteCalendar(calendarId);
     }
 }

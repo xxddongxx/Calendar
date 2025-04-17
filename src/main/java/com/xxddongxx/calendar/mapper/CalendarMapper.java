@@ -10,4 +10,5 @@ public interface CalendarMapper {
     void insertCalendar(Calendar calendar);
     Optional<Calendar> findById(Long id);
     int updateCalendar(Calendar calendar);
+    void deleteCalendar(Long id);
 }

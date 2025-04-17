@@ -82,4 +82,8 @@
         WHERE
             id = #{id}
     </update>
+    <delete id="deleteCalendar" parameterType="java.lang.Long">
+        /* deleteCalendar */
+        DELETE FROM calendar WHERE id = #{value};
+    </delete>
 </mapper>

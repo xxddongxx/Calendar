@@ -83,4 +83,14 @@ public class CalendarService {
         return new CalendarDto().toDto(this.findById(id));
     }
 
+    @Transactional
+    public void deleteCalendar(Long id){
+        Calendar calendar = this.findById(id);
+
+        if(Integer.parseInt(calendar.getId().toString()) != id){
+            throw new CustomException(HttpStatus.NOT_FOUND, "등록된 일정이 없습니다.");
+        }
+
+        calendarMapper.deleteCalendar(id);
+    }
 }

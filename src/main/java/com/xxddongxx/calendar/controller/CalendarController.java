@@ -54,4 +54,14 @@ public class CalendarController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ResponseMessage.success(calendarDto));
     }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "일정 삭제", description = "등록된 일정 삭제")
+    public ResponseEntity<ResponseMessage<Void>> deleteCalendar(@PathVariable("id") Long id){
+        logger.info("delete Calendar");
+
+        calendarService.deleteCalendar(id);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ResponseMessage.success());
+    }
 }
