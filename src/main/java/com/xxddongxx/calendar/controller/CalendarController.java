@@ -56,6 +56,16 @@ public class CalendarController {
                 .body(ResponseMessage.success(calendarDtoList));
     }
 
+    @GetMapping("/month")
+    @Operation(summary = "월별 일정 조회", description = "월별 등록된 일정")
+    public ResponseEntity<ResponseMessage<List<CalendarDto>>> findCalendarByMonth(
+            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){
+        logger.info("find calendar by month");
+        List<CalendarDto> calendarDtoList = calendarService.findCalendarByMonth(date);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ResponseMessage.success(calendarDtoList));
+    }
 
     @PutMapping("/{id}")
     @Operation(summary = "일정 수정", description = "등록된 일정을 수정합니다.")

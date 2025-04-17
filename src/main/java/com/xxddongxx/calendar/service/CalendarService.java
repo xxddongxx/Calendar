@@ -68,6 +68,17 @@ public class CalendarService {
         return calendarList.stream().map( calendar -> new CalendarDto().toDto(calendar)).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public List<CalendarDto> findCalendarByMonth(LocalDate date){
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("userId", USER_ID);
+        paramMap.put("date", date);
+
+        List<Calendar> calendarList = calendarMapper.findCalendarByMonth(paramMap);
+
+        return calendarList.stream().map( calendar -> new CalendarDto().toDto(calendar)).collect(Collectors.toList());
+    }
+
     @Transactional
     public CalendarDto updateCalendar(Long id, CalendarUpdateDto calendarUpdateDto){
         Calendar calendar = this.findById(id);

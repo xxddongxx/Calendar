@@ -14,4 +14,5 @@ public interface CalendarMapper {
     int updateCalendar(Calendar calendar);
     void deleteCalendar(Long id);
     List<Calendar> findCalendarByDay(Map paramMap);
+    List<Calendar> findCalendarByMonth(Map paramMap);
 }
