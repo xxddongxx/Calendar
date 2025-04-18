@@ -89,21 +89,27 @@
     <select id="findCalendarByDay" parameterType="Map" resultType="Calendar">
         /* findCalendarByDay */
         SELECT
-            *
+            DISTINCT C.*
         FROM calendar AS C
         LEFT JOIN event_share AS ES ON ES.event_id = C.id
         WHERE
             DATE_FORMAT(C.start_at, '%Y-%m-%d') = #{date}
-            AND(C.user_id = #{userId} OR ES.shared_user_id = #{userId})
+            AND (
+                C.is_private = FALSE
+                OR (C.is_private = TRUE AND (C.user_id = #{userId} OR ES.shared_user_id = #{userId}))
+            )
     </select>
     <select id="findCalendarByMonth" parameterType="Map" resultType="Calendar">
         /* findCalendarByDay */
         SELECT
-            *
+            DISTINCT C.*
         FROM calendar AS C
-        LEFT JOIN event_share AS ES ON ES.shred_user_id = C.id
+        LEFT JOIN event_share AS ES ON ES.event_id = C.id
         WHERE
             DATE_FORMAT(C.start_at, '%Y-%m') = DATE_FORMAT(#{date}, '%Y-%m')
-            AND(C.user_id = #{userId} OR ES.shared_user_id = #{userId})
+            AND (
+                C.is_private = FALSE
+                OR (C.is_private = TRUE AND (C.user_id = #{userId} OR ES.shared_user_id = #{userId}))
+            )
     </select>
 </mapper>
