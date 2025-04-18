@@ -3,6 +3,7 @@ package com.xxddongxx.calendar.model;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -24,6 +25,7 @@ public class Calendar {
     private String color;
     private String description;
     private Long userId;
+    private List<Long> sharedUserIdList;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

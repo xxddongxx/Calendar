@@ -4,6 +4,7 @@ import com.xxddongxx.calendar.config.exception.CustomException;
 import com.xxddongxx.calendar.dto.CalendarCreateDto;
 import com.xxddongxx.calendar.dto.CalendarDto;
 import com.xxddongxx.calendar.dto.CalendarUpdateDto;
+import com.xxddongxx.calendar.dto.EventShareDto;
 import com.xxddongxx.calendar.mapper.CalendarMapper;
 import com.xxddongxx.calendar.model.Calendar;
 import org.junit.jupiter.api.DisplayName;
@@ -32,11 +33,57 @@ class CalendarServiceTest {
     private CalendarService calendarService;
 
     @Mock
+    private EventShareService eventShareService;
+
+    @Mock
     private CalendarMapper calendarMapper;
 
-    @DisplayName("성공 - 일정 등록")
+    @DisplayName("성공 - 일정 등록, 공유 대상이 있을 때")
     @Test
     void createCalendarSuccess() {
+        // given
+        List<Long> sharedUserIdList = List.of(2L, 3L);
+        CalendarCreateDto calendarCreateDto = CalendarCreateDto.builder()
+                .title("저녁 약속")
+                .location("여의도")
+                .isImportant(true)
+                .isLunar(true)
+                .startAt(LocalDateTime.of(2025, 4, 15, 18, 30))
+                .endAt(LocalDateTime.of(2025, 4, 15, 20, 0))
+                .isAllDay(false)
+                .isRepeat(true)
+                .repeatType("DAILY")
+                .isPrivate(true)
+                .color("#FF00AA")
+                .description("맛있는 저녁!!")
+                .userId(1L)
+                .sharedUserIdList(sharedUserIdList)
+                .build();
+
+        // stubbing: insert 후 ID가 설정된다고 가정
+        Calendar calendar = calendarCreateDto.toModel();
+        calendar.setId(10L);
+        doAnswer(invocation -> {
+            Calendar param = invocation.getArgument(0);
+            param.setId(10L);
+            return null;
+        }).when(calendarMapper).insertCalendar(any(Calendar.class));
+
+        // when
+        calendarService.createCalendar(calendarCreateDto);
+        EventShareDto eventShareDto = EventShareDto.builder()
+                .eventId(10L)
+                .sharedUserIdList(sharedUserIdList)
+                .build();
+
+        // then
+        verify(calendarMapper, times(1)).insertCalendar(any(Calendar.class));
+        verify(eventShareService, times(1)).createEventShare(any(EventShareDto.class));
+    }
+
+    @DisplayName("성공 - 일정 등록, 공유 대상이 없을 때")
+    @Test
+    void createCalendarWithoutAccountListSuccess() {
         // given
         CalendarCreateDto calendarCreateDto = CalendarCreateDto.builder()
                 .title("저녁 약속")
@@ -52,13 +99,22 @@ class CalendarServiceTest {
                 .color("#FF00AA")
                 .description("맛있는 저녁!!")
                 .userId(1L)
+                .sharedUserIdList(Collections.emptyList())
                 .build();
+
+        // stubbing: insert 후 ID가 설정된다고 가정
+        doAnswer(invocation -> {
+            Calendar param = invocation.getArgument(0);
+            param.setId(10L);
+            return null;
+        }).when(calendarMapper).insertCalendar(any(Calendar.class));
 
         // when
         calendarService.createCalendar(calendarCreateDto);
 
         // then
-        verify(calendarMapper, times(1)).insertCalendar(any());
+        verify(calendarMapper, times(1)).insertCalendar(any(Calendar.class));
+        verify(eventShareService, never()).createEventShare(any(EventShareDto.class));
     }
 
     @DisplayName("실패 - 제목 없음")
@@ -326,6 +382,7 @@ class CalendarServiceTest {
         // given
         Long userId = 1L;
         LocalDate localDate = LocalDate.of(2025, 4,17);
+
         Calendar calendar = Calendar.builder()
                 .id(1L)
                 .title("저녁 약속")

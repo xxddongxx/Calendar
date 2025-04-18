@@ -4,6 +4,7 @@ import com.xxddongxx.calendar.config.exception.CustomException;
 import com.xxddongxx.calendar.dto.CalendarCreateDto;
 import com.xxddongxx.calendar.dto.CalendarDto;
 import com.xxddongxx.calendar.dto.CalendarUpdateDto;
+import com.xxddongxx.calendar.dto.EventShareDto;
 import com.xxddongxx.calendar.mapper.CalendarMapper;
 import com.xxddongxx.calendar.model.Calendar;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +26,12 @@ public class CalendarService {
 
     private static final Logger logger = LoggerFactory.getLogger(CalendarService.class);
     private final CalendarMapper calendarMapper;
+    private final EventShareService eventShareService;
     private final Long USER_ID = 1L;
 
     @Transactional
     public void createCalendar(CalendarCreateDto calendarCreateDto){
-        if(calendarCreateDto.getTitle().isEmpty() || calendarCreateDto.getTitle() == null){
+        if(calendarCreateDto.getTitle() == null ||calendarCreateDto.getTitle().isEmpty()){
             throw new IllegalArgumentException("제목은 필수입니다.");
         }
 
@@ -41,7 +43,17 @@ public class CalendarService {
             throw new IllegalArgumentException("사용자 정보가 필요합니다.");
         }
 
-        calendarMapper.insertCalendar(calendarCreateDto.toModel());
+        Calendar calendar = calendarCreateDto.toModel();
+        calendarMapper.insertCalendar(calendar);
+
+        // 공유할 사용자가 목록
+        if(calendarCreateDto.getSharedUserIdList() != null && !calendarCreateDto.getSharedUserIdList().isEmpty()){
+            EventShareDto eventShareDto = EventShareDto.builder()
+                    .eventId(calendar.getId())
+                    .sharedUserIdList(calendarCreateDto.getSharedUserIdList())
+                    .build();
+            eventShareService.createEventShare(eventShareDto);
+        }
     }
 
     @Transactional(readOnly = true)
@@ -91,7 +103,7 @@ public class CalendarService {
             throw new IllegalArgumentException("작성자가 아니므로 수정이 불가능합니다.");
         }
 
-        if(calendarUpdateDto.getTitle().isEmpty() || calendarUpdateDto.getTitle() == null){
+        if(calendarUpdateDto.getTitle() == null || calendarUpdateDto.getTitle().isEmpty()){
             throw new IllegalArgumentException("제목은 필수입니다.");
         }
 

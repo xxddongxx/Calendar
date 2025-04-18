@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Setter
 @Getter
@@ -27,7 +28,7 @@ public class CalendarCreateDto {
     @Schema(description = "장소", example = "여의도")
     private String location;
 
-    @Schema(description = "양력 여부(양력: true, 음력: false)", example = "true")
+    @Schema(description = "양력 여부(양력: false, 음력: true)", example = "false")
     private boolean isLunar;
 
     @NotNull(message = "시작 시간은 필수입니다.")
@@ -49,7 +50,7 @@ public class CalendarCreateDto {
     @Schema(description = "반복 주기(DAILY, WEEKLY, MONTHLY, YEARLY)", example = "DAILY")
     private String repeatType;
 
-    @Schema(description = "공개 여부(공개: true, 개인: false)", example = "true")
+    @Schema(description = "공개 여부(공개: true, 개인: false)", example = "false")
     private boolean isPrivate;
 
     @Schema(description = "번주(색상)", example = "#FF00AA")
@@ -61,6 +62,9 @@ public class CalendarCreateDto {
     @NotNull(message = "사용자 아이디는 필수입니다.")
     @Schema(description = "사용자 ID", example = "1")
     private Long userId;
+
+    @Schema(description = "공유할 사용자 목록", example = "[2, 3]")
+    private List<Long> sharedUserIdList;
 
     public Calendar toModel() {
         return Calendar.builder()
