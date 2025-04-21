@@ -54,3 +54,5 @@ java -jar -DDB_USER=username -DDB_PASS=password build/libs/calendar-0.0.1-SNAPSH
 |MyBatis|   SQL을 XML 또는 Annotation으로 관리하며 동적 SQL 작성이 가능한 퍼시스턴스 프레임워크    | 복잡한 조건 및 JOIN 쿼리 작성에 유리하며, SQL 제어가 필요한 부분에 사용 |
 |  JSON.simple  |           JSON 데이터를 파싱하고 Java 객체로 변환할 수 있는 경량 라이브러리           |        공공데이터 API에서 제공하는 JSON 응답 파싱에 사용        |
 |Spring Context Scheduling (@Scheduled)|정기적인 작업을 스케줄링하여 자동 실행할 수 있게 해주는 기능|매월 1일 공휴일 정보 자동 저장을 위한 배치 처리|
+
+📄 [📥 Calendar_Dump.sql 다운로드 (Google Drive)](https://drive.google.com/file/d/18gzKOyLzJYT5COhniRMg9JWgooctNddE/view?usp=drive_link)
