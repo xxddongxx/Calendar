@@ -4,7 +4,6 @@ import com.xxddongxx.calendar.dto.AccountDto;
 import com.xxddongxx.calendar.service.AccountService;
 import com.xxddongxx.calendar.util.ResponseMessage;
 import io.swagger.v3.oas.annotations.Operation;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

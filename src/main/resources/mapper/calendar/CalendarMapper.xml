@@ -90,6 +90,7 @@
         /* findCalendarByDay */
         SELECT
             DISTINCT C.*
+            , GROUP_CONCAT(ES.shared_user_id) AS shared_user_id_list
         FROM calendar AS C
         LEFT JOIN event_share AS ES ON ES.event_id = C.id
         WHERE
@@ -103,6 +104,7 @@
         /* findCalendarByDay */
         SELECT
             DISTINCT C.*
+            , GROUP_CONCAT(ES.shared_user_id) AS shared_user_id_list
         FROM calendar AS C
         LEFT JOIN event_share AS ES ON ES.event_id = C.id
         WHERE

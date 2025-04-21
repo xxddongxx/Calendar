@@ -17,3 +17,9 @@ mybatis:
     check-config-location: true
     config-location: classpath:mybatis-config.xml
     mapper-locations: classpath:mapper/*/*.xml
+
+# 공공데이터 공휴일
+apis:
+    data: https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/
+    service:
+        key: serviceKey
